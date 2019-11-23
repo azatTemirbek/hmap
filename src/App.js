@@ -15,7 +15,6 @@ import HPlatform, {
  * computed olarak noktaları çıkarmak 
  * sonra da resıze ozellıgı eklemek
  */
-
 // Create the parameters for the routing request:
 var routeParams = {
   // The routing mode:
@@ -67,7 +66,7 @@ const RouteMarker = ({ map, platform, ui, route, key, routeShape }) => {
         map={map}
         platform={platform}
         icon={icon}
-        setViewBounds={false}
+        setViewBounds
       />
     </React.Fragment>
   );
@@ -99,10 +98,9 @@ export default function App() {
           >
             <RouteMarker />
           </HMapRoute>
-
         </HMap>
       </HPlatform>;
-      
+
     </div>
   )
 }
