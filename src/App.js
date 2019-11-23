@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import HPlatform, {
-  HMap,
-  HMapRoute,
-  HMapMarker,
-  HMapPolyLine
+  HMap
 } from "react-here-map";
+import RouteMarker, { icon } from './components/RouteMarker';
+import HMapRoute from './components/HMapRoute';
+import { data } from './data';
+import { useStoreActions, useStoreState } from 'easy-peasy';
+
 /***
  * todo :: make state and load from datajs 
  * state gore rota olushturama
@@ -32,47 +34,14 @@ const routeLineOptions = {
   arrows: { fillColor: "white", frequency: 2, width: 0.8, length: 0.7 }
 };
 
-const icon =
-  '<svg width="24" height="24" ' +
-  'xmlns="http://www.w3.org/2000/svg">' +
-  '<rect stroke="white" fill="#1b468d" x="1" y="1" width="22" ' +
-  'height="22" /><text x="12" y="18" font-size="12pt" ' +
-  'font-family="Arial" font-weight="bold" text-anchor="middle" ' +
-  'fill="white">H</text></svg>';
-
-// Handles manipulation of the path between the two points
-const RouteMarker = ({ map, platform, ui, route, key, routeShape }) => {
-  // Retrieve the mapped positions of the requested waypoints:
-  const startPoint = route.waypoint[0].mappedPosition;
-  const endPoint = route.waypoint[1].mappedPosition;
-
-  // Create a marker for the start point:
-  const startMarker = { lat: startPoint.latitude, lng: startPoint.longitude };
-  // Create a marker for the end point:
-  const endMarker = { lat: endPoint.latitude, lng: endPoint.longitude };
-
-  return (
-    <React.Fragment>
-      <HMapPolyLine points={routeShape} map={map} setViewBounds />
-      <HMapMarker
-        coords={startMarker}
-        map={map}
-        platform={platform}
-        icon={icon}
-        setViewBounds
-      />
-      <HMapMarker
-        coords={endMarker}
-        map={map}
-        platform={platform}
-        icon={icon}
-        setViewBounds
-      />
-    </React.Fragment>
-  );
-};
 
 export default function App() {
+  const points = useStoreState(state => state.routes.points);
+  const importData = useStoreActions(actions => actions.routes.importData);
+  /*** component did mount */
+  useEffect(() => {
+    importData(data);
+  });
   return (
     <div>
       <HPlatform
@@ -95,6 +64,8 @@ export default function App() {
             icon={icon}
             defaultDisplay
             lineOptions={routeLineOptions}
+            renderDefaultLine={true}
+            isoLine={true}
           >
             <RouteMarker />
           </HMapRoute>

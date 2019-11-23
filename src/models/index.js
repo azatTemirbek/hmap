@@ -1,7 +1,10 @@
+import { action } from "easy-peasy";
+
 const routeModel = {
-    items: {
-        1: { id: 1, name: 'Peas', price: 10 }
-    }
+    points: [],
+    importData: action((state,payload) => {
+        state.points = payload;
+    })
 };
 
 const storeModel = {
