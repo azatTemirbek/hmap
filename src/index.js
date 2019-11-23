@@ -1,12 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import { StoreProvider, createStore  } from 'easy-peasy';
 import * as serviceWorker from './serviceWorker';
+import App from './App';
+import storeModel from './models';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import './index.css';
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
+const store = createStore(storeModel);
+
+ReactDOM.render(
+    <StoreProvider store={store}>
+        <App />
+    </StoreProvider>,
+    document.getElementById('root'));
+
+// unregister() to register()
 serviceWorker.unregister();
