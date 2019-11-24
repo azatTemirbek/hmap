@@ -5,7 +5,9 @@ import HMapRoute from './components/HMapRoute';
 import { data } from './data';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import HMap from './components/HMap';
-import Polygon from "react-here-map/dist/es/components/HMap/objects/Polygon";
+import Polygon from "./components/Polygon";
+import hull from "hull.js";
+
 
 
 /***
@@ -33,30 +35,54 @@ export default function App() {
   const getRouteParams = () => {
     let map = {};
     points.forEach(function (e) {
-        var k = e['routeId'];
-        map[k] = map[k] || [];
-        map[k].push(e);
+      var k = e['routeId'];
+      map[k] = map[k] || [];
+      map[k].push(e);
     });
     let newArray = Object.keys(map).map(function (k) {
-        return { key: k, data: map[k] };
+      return { key: k, data: map[k] };
     });
     let groupedPoints = newArray
     let routeParamsList = groupedPoints.map(({ key, data }, index) => {
-        var routeParams = {
-            // The routing mode:
-            mode: "fastest;car",
-            // representation mode 'display'
-            representation: "display"
-        };
-        data.forEach(({ lat, long }, index) => {
-            /** waypoint2: "geo!50.5309916298853,15.3846220493377",*/
-            routeParams['waypoint' + index] = `geo!${lat},${long}`;
-            routeParams['data' + index] = data[index];
-        })
-        return routeParams
+      var routeParams = {
+        // The routing mode:
+        mode: "fastest;car",
+        // representation mode 'display'
+        representation: "display"
+      };
+      data.forEach(({ lat, long }, index) => {
+        /** waypoint2: "geo!50.5309916298853,15.3846220493377",*/
+        routeParams['waypoint' + index] = `geo!${lat},${long}`;
+        routeParams['data' + index] = data[index];
+      })
+      return routeParams
     })
     return routeParamsList
-}
+  }
+  const getRouteParams4Polygon = () => {
+    var routeParams = {
+      // The routing mode:
+      mode: "fastest;car",
+      // representation mode 'display'
+      representation: "display"
+    };
+    points.map((data, index) => {
+      /** waypoint2: "geo!50.5309916298853,15.3846220493377",*/
+      routeParams['waypoint' + index] = `geo!${data.lat},${data.long}`;
+      routeParams['data' + index] = data;
+    })
+    debugger
+    return routeParams
+  }
+  const getPoints4Polygon = () => {
+    let points4P = [];
+    points.map((data, index) => {
+      points4P.push([data.lat,data.long])
+    })
+    console.log(hull(points4P))
+    debugger
+    return hull(points4P);
+  }
   /*** component did mount */
   useEffect(() => {
     /***  used to load data to state */
@@ -77,11 +103,11 @@ export default function App() {
     dragend: (ev, bh, map, ui) => {
       var target = ev.target;
       if (target instanceof window.H.map.Marker) {
-        let {originalPosition, lat,lng, data,...params} = {...target.getData(),...target.getGeometry()}
-        let index=-1;
-        points.map((itm,i)=>{
-          if(itm.long == data.long && itm.lat == data.lat){
-            index=i;
+        let { originalPosition, lat, lng, data, ...params } = { ...target.getData(), ...target.getGeometry() }
+        let index = -1;
+        points.map((itm, i) => {
+          if (itm.long == data.long && itm.lat == data.lat) {
+            index = i;
           }
           return itm
         })
@@ -90,7 +116,7 @@ export default function App() {
         //     // map.removeObject(item)
         //   }
         // })
-        index !== -1 && setItems({index, lat,lng} ); 
+        index !== -1 && setItems({ index, lat, lng });
         bh.enable();
       }
     },
@@ -105,16 +131,16 @@ export default function App() {
       var target = ev.target;
       if (target instanceof window.H.map.Marker) {
         console.log(target.getData())
-        let {originalPosition} = target.getData();
+        let { originalPosition } = target.getData();
         // todo: html string
-        let content =`
+        let content = `
         ${JSON.stringify(target.getData())}
-        `; 
+        `;
         // show info bubble
-        ui.addBubble(new window.H.ui.InfoBubble(ev.target.getGeometry(), {content}));
-      }else{
+        ui.addBubble(new window.H.ui.InfoBubble(ev.target.getGeometry(), { content }));
+      } else {
         /** close all other opened bubles */
-        ui.getBubbles().map(ite=>ite.close())
+        ui.getBubbles().map(ite => ite.close())
       }
     }
   }
@@ -134,6 +160,18 @@ export default function App() {
           style={defaultStyle}
           mapEvents={myMapevents}
         >
+          {/* <HMapRoute
+            key={'index'}
+            // iso
+            routeParams={getRouteParams4Polygon()}
+            icon={icon}
+            defaultDisplay
+            lineOptions={routeLineOptions}
+            renderDefaultLine={false}
+            isoLine={false}
+          > */}
+            <Polygon routeShape={getPoints4Polygon()} ></Polygon>
+          {/* </HMapRoute> */}
           {
             getRouteParams().map((routeParams, index) => {
               return (

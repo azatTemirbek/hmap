@@ -12,7 +12,8 @@ export default class HMapRoute extends Component {
         this.update = this.update.bind(this)
     }
     async update(){
-        await this.routingService.calculateRoute(
+        if(this.props.iso===undefined){
+            await this.routingService.calculateRoute(
             this.props.routeParams,
             (a) => {
                 a.response.route[0].waypoint.map((item,index)=>{
@@ -21,7 +22,18 @@ export default class HMapRoute extends Component {
                 this.setState({route:a.response.route})
             }
             , e => console.log(e.message)
-        );
+        )}else{
+            await this.routingService.calculateIsoline(
+                this.props.routeParams,
+                (a) => {
+                    a.response.route[0].waypoint.map((item,index)=>{
+                        item.data = this.props.routeParams['data'+index];
+                    })
+                    this.setState({route:a.response.route})
+                }
+                , e => console.log(e.message)
+            );
+        }
     }
     async componentDidUpdate(prevProps, nextState){
          // returns false if different
