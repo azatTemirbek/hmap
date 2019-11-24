@@ -14,19 +14,20 @@ export default class HMapRoute extends Component {
     async update(){
         await this.routingService.calculateRoute(
             this.props.routeParams,
-            ({ response }) => {
-                this.setState({route:response.route})
+            (a) => {
+                a.response.route[0].waypoint.map((item,index)=>{
+                    item.data = this.props.routeParams['data'+index];
+                })
+                this.setState({route:a.response.route})
             }
             , e => console.log(e.message)
         );
     }
-    async shouldComponentUpdate(nextProps, nextState){
+    async componentDidUpdate(prevProps, nextState){
          // returns false if different
-        if(!isEqual(nextProps.routeParams, this.props.routeParams)){
+        if(!isEqual(prevProps.routeParams, this.props.routeParams)){
             await this.update()
-            alert()
         }
-        return true
     }
     async componentWillMount() {
         this.routingService = await this.props.platform.getRoutingService();
@@ -43,7 +44,7 @@ export default class HMapRoute extends Component {
             return { lat: coords[0], lng: coords[1] };
         });
         return React.Children.map(children, child => {
-            return React.cloneElement(child, { ...params, routeShape: _routeShape, route: route[0] });
+            return React.cloneElement(child, { ...params, routeShape: _routeShape, route: {...route[0]} });
         });
     }
 }

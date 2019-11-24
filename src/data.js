@@ -1,7 +1,10 @@
 export const data = [
-    { routeId: 1, sequence: 0, lat: 38.425179, long: 27.200605 },
+    { routeId: 1, sequence: 0, lat: 38.425179, long: 27.200605  },
     { routeId: 1, sequence: 1, lat: 38.35123717, long: 27.13969536 },
-    { routeId: 1, sequence: 2, lat: 38.3418202, long: 27.1402271 }
+    { routeId: 1, sequence: 2, lat: 38.3418202, long: 27.1402271 },
+    { routeId: 2, sequence: 0, lat: 35.425179, long: 25.200605  },
+    { routeId: 2, sequence: 1, lat: 35.35123717, long: 25.13969536 },
+    { routeId: 2, sequence: 2, lat: 35.3418202, long: 25.1402271 }
     // { routeId: 1, sequence: 3, lat: 38.3271013, long: 27.1336948 },
     // { routeId: 1, sequence: 4, lat: 38.3244514, long: 27.1346196 },
     // { routeId: 1, sequence: 5, lat: 38.32357264, long: 27.13306437 },

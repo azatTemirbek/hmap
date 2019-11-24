@@ -37,8 +37,9 @@ const routeModel = {
             data.forEach(({ lat, long }, index) => {
                 /** waypoint2: "geo!50.5309916298853,15.3846220493377",*/
                 routeParams['waypoint' + index] = `geo!${lat},${long}`;
+                routeParams['data' + index] = data[index];
             })
-            return {...routeParams}
+            return routeParams
         })
         return routeParamsList
     }),

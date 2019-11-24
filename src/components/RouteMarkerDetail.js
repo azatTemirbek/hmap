@@ -9,6 +9,7 @@ export default function RouteMarkerDetail({
     map, platform, ui, route, routeShape,...props 
 }) {
     console.log('RouteMarkerDetail',props)
+    console.log('route',route)
     const [updateMarker,setUpdateMarker] = useState(false)
     let Marker = { lat: mappedPosition.latitude, lng: mappedPosition.longitude };
     useEffect(() => {
@@ -24,6 +25,7 @@ export default function RouteMarkerDetail({
             setViewBounds
             // type='DOM'
             updateMarker={updateMarker}
+            props={props}
             getMarker={(marker) => {
                 /** set options of the marker */
                 marker.draggable = true
