@@ -7,37 +7,38 @@ import { isEqual } from 'lodash';
 export default class HMapRoute extends Component {
     constructor(props) {
         super(props);
-        this.state = {route:[]}
-        console.log('HMapRoute', props)
+        this.state = { route: [] }
+        window.debug && console.log('HMapRoute', props)
         this.update = this.update.bind(this)
     }
-    async update(){
-        if(this.props.iso===undefined){
+    async update() {
+        if (this.props.iso === undefined) {
             await this.routingService.calculateRoute(
-            this.props.routeParams,
-            (a) => {
-                a.response.route[0].waypoint.map((item,index)=>{
-                    item.data = this.props.routeParams['data'+index];
-                })
-                this.setState({route:a.response.route})
-            }
-            , e => console.log(e.message)
-        )}else{
+                this.props.routeParams,
+                (a) => {
+                    a.response.route[0].waypoint.forEach((item, index) => {
+                        item.data = this.props.routeParams['data' + index];
+                    })
+                    this.setState({ route: a.response.route })
+                }
+                , e => console.log(e.message)
+            )
+        } else {
             await this.routingService.calculateIsoline(
                 this.props.routeParams,
                 (a) => {
-                    a.response.route[0].waypoint.map((item,index)=>{
-                        item.data = this.props.routeParams['data'+index];
+                    a.response.route[0].waypoint.forEach((item, index) => {
+                        item.data = this.props.routeParams['data' + index];
                     })
-                    this.setState({route:a.response.route})
+                    this.setState({ route: a.response.route })
                 }
                 , e => console.log(e.message)
             );
         }
     }
-    async componentDidUpdate(prevProps, nextState){
-         // returns false if different
-        if(!isEqual(prevProps.routeParams, this.props.routeParams)){
+    async componentDidUpdate(prevProps, nextState) {
+        // returns false if different
+        if (!isEqual(prevProps.routeParams, this.props.routeParams)) {
             await this.update()
         }
     }
@@ -50,13 +51,13 @@ export default class HMapRoute extends Component {
         let { route } = this.state
 
         /** will return ıs date ıs null */
-        if (!children || route.length===0) return null;
+        if (!children || route.length === 0) return null;
         let _routeShape = route[0].shape.map(point => {
             const coords = point.split(",");
             return { lat: coords[0], lng: coords[1] };
         });
         return React.Children.map(children, child => {
-            return React.cloneElement(child, { ...params, routeShape: _routeShape, route: {...route[0]} });
+            return React.cloneElement(child, { ...params, routeShape: _routeShape, route: { ...route[0] } });
         });
     }
 }

@@ -1,7 +1,9 @@
-import { action, computed } from "easy-peasy";
+import { action, computed, actionOn } from "easy-peasy";
+import hull from "hull.js";
 
 const routeModel = {
     points: [],
+    polygonPoints: [],
     /** will get groued array of objects */
     groupBy: computed(state => fieldName => {
         let map = {};
@@ -16,7 +18,7 @@ const routeModel = {
         return newArray
     }),
     /** will transform route params option from points state */
-    getRouteParams: computed([state=>state.points],points => {
+    getRouteParams: computed([state => state.points], points => {
         let map = {};
         points.forEach(function (e) {
             var k = e['routeId'];
@@ -46,15 +48,63 @@ const routeModel = {
     /** function to import data from payload */
     importData: action((state, payload) => {
         state.points = payload;
+        let points4P = [];
+        payload.forEach((data, index) => {
+            points4P.push([data.lat, data.long])
+        })
+        state.polygonPoints = hull(points4P);
     }),
-    setItems: action((state, {index, lat,lng}) => {
-        state.points[index].lat = lat;
-        state.points[index].long = lng;
-    })
+    setItems: action((state, { data, lat, lng, points }) => {
+        state.points = points.map((it)=>{
+            if(it.routeId===data.routeId && it.sequence === data.sequence){
+                it.lat = lat;
+                it.long = lng;
+            }
+            return it
+        })
+    }),
+    setPolygonPoint: action((state, {oldPoint, newPoint, polygonPoints}) => {
+        let pp = state.polygonPoints;
+        for (var i = 0; i < pp.length; i++) {
+            if (pp[i][0] === oldPoint[0] && pp[i][1] === oldPoint[1]) {
+                pp[i][0] = newPoint[0];
+                pp[i][1] = newPoint[1];
+            }
+        }
+        state.polygonPoints = pp;
+    }),
+    /** listener to rebuild points */
+    onSetItems: actionOn(
+        actions => actions.setItems,
+        // handler:
+        (state, target) => {
+            let points = state.points;
+            let points4P = []
+            points.forEach((data) => {
+                points4P.push([data.lat,data.long])
+            })
+            // points4P = hull(points4P)
+            var payload = [...state.polygonPoints, ...points4P];
+            state.polygonPoints = hull(payload);
+        }
+    ),
+    onSetPolygonPoint: actionOn(
+        actions => actions.setPolygonPoint,
+        // handler:
+        (state, target) => {
+            let points = state.points;
+            let points4P = []
+            points.forEach((data) => {
+                points4P.push([data.lat,data.long])
+            })
+            // points4P = hull(points4P)
+            // debugger
+            var payload = [...state.polygonPoints, ...points4P];
+            state.polygonPoints = hull(payload);
+        }
+    )
 };
-
 const storeModel = {
     routes: routeModel,
 };
-
 export default storeModel;

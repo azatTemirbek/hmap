@@ -1,37 +1,20 @@
-import React,{useEffect,useState} from 'react'
-import {
-    HMapMarker,
-} from "react-here-map";
+import React from 'react'
+import Marker from './Marker'
 import { icon } from './RouteMarker';
-
-export default function RouteMarkerDetail({
-    mappedPosition,
-    map, platform, ui, route, routeShape,...props 
-}) {
-    console.log('RouteMarkerDetail',props)
-    console.log('route',route)
-    const [updateMarker,setUpdateMarker] = useState(false)
-    let Marker = { lat: mappedPosition.latitude, lng: mappedPosition.longitude };
-    useEffect(() => {
-        // Update the document title using the browser API
-        setUpdateMarker(true)
-      });
+export default function RouteMarkerDetail(props) {
+    window.debug && console.log('RouteMarkerDetail', props)
+    let {
+        mappedPosition,
+        map, platform, ui, route, routeShape, ...params
+    } = props
+    let marker = { lat: mappedPosition.latitude, lng: mappedPosition.longitude };
     return (
-        <HMapMarker
-            coords={Marker}
+        <Marker
+            coords={marker}
             map={map}
             platform={platform}
             icon={icon}
-            setViewBounds
-            // type='DOM'
-            updateMarker={updateMarker}
-            props={props}
-            getMarker={(marker) => {
-                /** set options of the marker */
-                marker.draggable = true
-                marker.setData(props)
-                return marker
-            }}
+            props={params}
         />
     )
 }

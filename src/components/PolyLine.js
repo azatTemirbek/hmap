@@ -6,43 +6,35 @@ import { isEqual } from 'lodash';
 import React, { Component } from 'react'
 
 export default class PolyLine extends Component {
-    constructor(props){
-        super(props)
-       
-    }
-    async shouldComponentUpdate(nextProps, nextState){
+    async shouldComponentUpdate(nextProps, nextState) {
         // returns false if different
-       if(!isEqual(nextProps.points, this.props.points)){
-        nextProps.map.removeObject(this.polyLine);
-        var lineString = new window.H.geo.LineString();
-        nextProps.points.forEach(function (point) {
-            lineString.pushPoint(point);
-        });
-
-        // Initialize a polyLine with the lineString:
-        this.polyLine = new window.H.map.Polyline(lineString, nextProps.options);
-        nextProps.map.addObject(this.polyLine);
+        if (!isEqual(nextProps.points, this.props.points)) {
+            nextProps.map.removeObject(this.polyLine);
+            var lineString = new window.H.geo.LineString();
+            nextProps.points.forEach(function (point) {
+                lineString.pushPoint(point);
+            });
+            // Initialize a polyLine with the lineString:
+            this.polyLine = new window.H.map.Polyline(lineString, nextProps.options);
+            nextProps.map.addObject(this.polyLine);
+            return true
+        }
         return true
-       }
-       return true
-   }
-    componentDidMount(){
+    }
+    componentDidMount() {
         const {
             points,
             options,
             map,
             setViewBounds,
-            platform,
-            ui,
-            __options
-          } = merge({ setViewBounds: true }, this.props);
-          if (!window.H || !window.H.map || !map) {
+        } = merge({ setViewBounds: true }, this.props);
+        if (!window.H || !window.H.map || !map) {
             throw new Error("HMap has to be initialized before adding Map Objects");
-          }
-        
-          if (!Array.isArray(points)) {
+        }
+
+        if (!Array.isArray(points)) {
             throw new Error(
-              "points should be an array of objects containing lat and lng properties"
+                "points should be an array of objects containing lat and lng properties"
             );
         }
         // Initialize a LineString and add all the points to it:
@@ -69,8 +61,8 @@ export default class PolyLine extends Component {
 }
 
 PolyLine.propTypes = {
-  points: PropTypes.array.isRequired,
-  options: PropTypes.object,
-  map: PropTypes.object,
-  setViewBounds: PropTypes.bool
+    points: PropTypes.array.isRequired,
+    options: PropTypes.object,
+    map: PropTypes.object,
+    setViewBounds: PropTypes.bool
 };

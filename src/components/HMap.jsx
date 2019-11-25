@@ -9,7 +9,7 @@ class HMap extends React.Component {
     super(props);
     this.container = React.createRef();
     this.state = { builder: {} };
-    console.log('HMap',props)
+    window.debug && console.log('HMap',props)
   }
 
   componentDidMount() {

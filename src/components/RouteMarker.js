@@ -1,7 +1,7 @@
 import React from 'react'
-import 
-    PolyLine
-from "./PolyLine";
+import
+PolyLine
+    from "./PolyLine";
 import RouteMarkerDetail from './RouteMarkerDetail'
 
 export const icon =
@@ -16,13 +16,14 @@ export const icon =
 export default function RouteMarker({ map, platform, ui, route, routeShape }) {
     return (
         <React.Fragment>
-            
-        
-            <PolyLine points={[...routeShape]} map={map} setViewBounds />
+
+
+            <PolyLine points={[...routeShape]} map={map} />
             {
                 /** Retrieve the mapped positions of the requested waypoints:  */
-                // let Marker = { lat: mappedPosition.latitude, lng: mappedPosition.longitude };
-                route.waypoint.map((o) => (<RouteMarkerDetail {...o}
+                route.waypoint.map((o, index) => (<RouteMarkerDetail
+                    key={index}
+                    {...o}
                     map={map}
                     platform={platform}
                     ui={ui}
